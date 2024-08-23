@@ -1,1 +1,4 @@
 rootProject.name = 'notetaking-bot'
+include 'Infrastructure'
+include 'Application'
+include 'Presentation'

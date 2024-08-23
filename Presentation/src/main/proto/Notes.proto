@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "src";
+option java_outer_classname = "NotesServiceProto";
+
+package notes_service;
+
+message User {
+  int32 user_id = 1;
+  string user_telegram_tag = 2;
+  int64 user_telegram_id = 3;
+}
+
+message Note {
+  int32 note_id = 1;
+  int32 note_details_id = 2;
+  string content_url = 3;
+  bool status_of_completion = 4;
+}
+
+message NotesSpecificDetails {
+  int32 note_details_id = 1;
+  string content_short_name = 2;
+  int32 description_id = 3;
+  string content_type = 4; // Enum defined below
+}
+
+message Description {
+  int32 description_id = 1;
+  repeated int32 comment_ids = 2;
+}
+
+message Comment {
+  int32 comment_id = 1;
+  string text_message = 2;
+  int32 timecode = 3;
+  int32 page = 4;
+}
+
+message UsersNotes {
+  int32 user_id = 1;
+  repeated int32 note_id = 2;
+}
+
+enum ContentType {
+  PODCAST = 0;
+  VIDEO = 1;
+  BOOK = 2;
+  ARTICLE = 3;
+}
+
+message GetUserByTelegramIdRequest {
+  int64 user_telegram_id = 1;
+}
+
+message GetUserByIdRequest {
+  int32 user_id = 1;
+}
+
+message GetUserResponse {
+  User user = 1;
+}
+
+message GetNoteByIdRequest {
+  int32 note_id = 1;
+}
+
+message GetNoteByShortNameRequest {
+  string short_name = 1;
+}
+
+message GetNoteByUrlRequest {
+  string url = 1;
+}
+
+message GetNoteResponse {
+  Note note = 1;
+}
+
+message GetNotesSpecificDetailsRequest {
+  int32 note_details_id = 1;
+}
+
+message GetNotesSpecificDetailsResponse {
+  NotesSpecificDetails details = 1;
+}
+
+message GetDescriptionRequest {
+  int32 description_id = 1;
+}
+
+message GetDescriptionResponse {
+  Description description = 1;
+}
+
+message GetCommentRequest {
+  int32 comment_id = 1;
+}
+
+message GetCommentResponse {
+  Comment comment = 1;
+}
+
+message GetUsersNotesRequest {
+  int32 user_id = 1;
+}
+
+message GetUsersNotesResponse {
+  repeated Note notes = 1;
+}
+
+
+service NotesService {
+  rpc GetUserByTelegramId(GetUserByTelegramIdRequest) returns (GetUserResponse);
+  rpc GetUserById(GetUserByIdRequest) returns (GetUserResponse);
+  rpc GetNoteByShortName(GetNoteByShortNameRequest) returns (GetNoteResponse);
+  rpc GetNoteById(GetNoteByIdRequest) returns (GetNoteResponse);
+  rpc GetNotesSpecificDetails(GetNotesSpecificDetailsRequest) returns (GetNotesSpecificDetailsResponse);
+  rpc GetDescription(GetDescriptionRequest) returns (GetDescriptionResponse);
+  rpc GetComment(GetCommentRequest) returns (GetCommentResponse);
+  rpc GetUsersNotes(GetUsersNotesRequest) returns (GetUsersNotesResponse);
+}

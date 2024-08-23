@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,8 +19,14 @@ public class Description {
     @Column(name = "comment_id")
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
-    @Column(name = "timecode")
-    private Integer timecode;
-    @Column(name = "page")
-    private Integer page;
+
+    public Description() {
+        this.comments = new HashSet<>();
+    }
+
+    public Description addNewComment(Comment comment) {
+        comments.add(comment);
+
+        return this;
+    }
 }

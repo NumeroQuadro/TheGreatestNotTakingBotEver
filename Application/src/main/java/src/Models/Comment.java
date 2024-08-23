@@ -16,7 +16,7 @@ public class Comment {
     @Column(name = "text_message")
     private String textMessage;
     @Column(name = "timecode")
-    private Integer timecode;
+    private Long timecode;
     @Column(name = "page")
     private Integer page;
 }

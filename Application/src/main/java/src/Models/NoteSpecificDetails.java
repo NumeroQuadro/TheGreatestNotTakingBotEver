@@ -13,7 +13,6 @@ public class NoteSpecificDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "note_details_id")
     private Integer id;
-    @Column(name = "description_id", nullable = false)
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "description_id", referencedColumnName = "description_id")
     private Description description;
