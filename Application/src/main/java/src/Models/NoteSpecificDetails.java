@@ -18,6 +18,8 @@ public class NoteSpecificDetails {
     private Description description;
     @Column(name = "content_short_name", unique = true)
     private String contentShortName;
+    @Column(name = "content_url")
+    private String contentUrl;
     @Column(name = "content_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ContentTypeEnum contentType;

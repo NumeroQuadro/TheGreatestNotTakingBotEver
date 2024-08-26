@@ -16,8 +16,6 @@ public class Notes {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "note_details_id", referencedColumnName = "note_details_id")
     private NoteSpecificDetails noteSpecificDetails;
-    @Column(name = "content_url")
-    private String contentUrl;
     @Column(name = "status_of_completion")
     private Boolean statusOfCompletion;
 }

@@ -9,7 +9,6 @@ create table if not exists notes
 (
     note_id              serial not null,
     note_details_id      integer unique,
-    content_url          varchar(255),
     status_of_completion bool   not null,
     primary key (note_id)
 );
@@ -18,6 +17,7 @@ create table if not exists notes_specific_details
 (
     note_details_id    serial       not null,
     content_short_name varchar(255) unique,
+    content_url          varchar(255),
     description_id     integer      not null unique,
     content_type       varchar(255) not null check (content_type in ('PODCAST', 'VIDEO', 'BOOK', 'ARTICLE')),
     primary key (note_details_id)

@@ -17,19 +17,17 @@ public class NoteService {
         this.noteSpecificDetailsService = noteSpecificDetailsService;
     }
 
-    public Notes addNote(NoteSpecificDetails noteSpecificDetails, String url) {
+    public Notes addNote(NoteSpecificDetails noteSpecificDetails) {
         var note = new Notes();
         note.setNoteSpecificDetails(noteSpecificDetails);
-        note.setContentUrl(url);
         note.setStatusOfCompletion(false);
 
         return notesRepository.save(note);
     }
 
-    public Notes addNote(NoteSpecificDetails noteSpecificDetails, String url, Boolean statusOfCompletion) {
+    public Notes addNote(NoteSpecificDetails noteSpecificDetails, Boolean statusOfCompletion) {
         var note = new Notes();
         note.setNoteSpecificDetails(noteSpecificDetails);
-        note.setContentUrl(url);
         note.setStatusOfCompletion(statusOfCompletion);
 
         return notesRepository.save(note);

@@ -18,12 +18,23 @@ public class NoteSpecificDetailsService {
         this.descriptionService = descriptionService;
     }
 
-    public NoteSpecificDetails addNoteSpecificDetails(String contentShortName, ContentTypeEnum contentType) {
+    public NoteSpecificDetails addNoteSpecificDetails(String url, String contentShortName, ContentTypeEnum contentType) {
         var noteSpecificDetails = new NoteSpecificDetails();
         noteSpecificDetails.setContentType(contentType);
         noteSpecificDetails.setContentShortName(contentShortName);
+        noteSpecificDetails.setContentUrl(url);
         noteSpecificDetails.setDescription(descriptionService.addDescription());
         noteSpecificDetails.setDescription(new Description());
+
+        return noteSpecificDetailsRepository.save(noteSpecificDetails);
+    }
+
+    public NoteSpecificDetails addNoteSpecificDetails(String url, String contentShortName, ContentTypeEnum contentType, Description description) {
+        var noteSpecificDetails = new NoteSpecificDetails();
+        noteSpecificDetails.setContentType(contentType);
+        noteSpecificDetails.setContentShortName(contentShortName);
+        noteSpecificDetails.setContentUrl(url);
+        noteSpecificDetails.setDescription(description);
 
         return noteSpecificDetailsRepository.save(noteSpecificDetails);
     }
