@@ -31,23 +31,23 @@ tasks.named('test') {
 }
 
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-
-            // Apply version mapping strategy
-            versionMapping {
-                usage('java-api') {
-                    fromResolutionOf('runtimeClasspath')
-                }
-                usage('java-runtime') {
-                    fromResolutionResult()
-                }
-            }
-        }
-    }
-    repositories {
-        mavenLocal()
-    }
-}
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            from components.java
+//
+//            // Apply version mapping strategy
+//            versionMapping {
+//                usage('java-api') {
+//                    fromResolutionOf('runtimeClasspath')
+//                }
+//                usage('java-runtime') {
+//                    fromResolutionResult()
+//                }
+//            }
+//        }
+//    }
+//    repositories {
+//        mavenLocal()
+//    }
+//}
