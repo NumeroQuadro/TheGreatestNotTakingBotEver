@@ -1,4 +1,4 @@
 rootProject.name = 'notetaking-bot'
-include 'Infrastructure'
-include 'Application'
-include 'Presentation'
+include ':Presentation'
+include ':Application'
+include ':Infrastructure'

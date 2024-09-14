@@ -12,7 +12,6 @@ import src.GrpcImplementation.GrpcServer;
 import src.Services.UserService;
 
 @SpringBootApplication
-@RestController
 @EnableJpaRepositories(basePackages = {"src.Repositories"})
 @ComponentScan(basePackages = {"src.Services", "src.Repositories", "org.security.notetakingbot", "src.GrpcImplementation"})
 @EntityScan(basePackages = {"src.Models"})
@@ -24,7 +23,7 @@ public class NotetakingBotApplication {
     @Bean
     CommandLineRunner commandLineRunner(GrpcServer grpcServer) {
         return args -> {
-            grpcServer.run();
+            grpcServer.run(50051);
         };
     }
 }

@@ -4,4 +4,5 @@ public enum ContentTypeEnum {
     PODCAST,
     VIDEO,
     BOOK,
+    ARTICLE,
 }

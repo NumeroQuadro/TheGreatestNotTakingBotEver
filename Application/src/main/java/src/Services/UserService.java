@@ -5,19 +5,23 @@ import org.springframework.stereotype.Service;
 import src.Models.Users;
 import src.Repositories.UsersRepository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 public class UserService {
-    private UsersRepository usersRepository;
+    private final UsersRepository usersRepository;
 
     @Autowired
-    public UserService(UsersRepository usersRepository) {
+    public UserService(
+            UsersRepository usersRepository
+    ) {
         this.usersRepository = usersRepository;
     }
 
-    public Users addNewUser(Long telegramId, String telegramTag) {
+    public Users addUser(Long telegramId) {
         var user = new Users();
         user.setTelegramId(telegramId);
-        user.setTelegramTag(telegramTag);
 
         return usersRepository.save(user);
     }
@@ -26,7 +30,7 @@ public class UserService {
         usersRepository.delete(user);
     }
 
-    public void deleteUser(Integer userId) {
+    public void deleteUser(UUID userId) {
         var user = usersRepository.findById(userId);
         user.ifPresent(users -> usersRepository.delete(users));
     }
@@ -40,7 +44,7 @@ public class UserService {
         return usersRepository.findByTelegramId(telegramId).orElseThrow();
     }
 
-    public Users getUser(Integer id) {
-        return usersRepository.findById(id).orElseThrow();
+    public Optional<Users> getUser(UUID id) {
+        return usersRepository.findById(id);
     }
 }

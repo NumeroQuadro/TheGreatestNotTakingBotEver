@@ -1,58 +1,51 @@
-create table if not exists users
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE IF NOT EXISTS users
 (
-    user_id           serial       not null,
-    user_telegram_tag varchar(255) not null unique,
-    user_telegram_id  bigint       not null unique,
-    primary key (user_id)
-);
-create table if not exists notes
-(
-    note_id              serial not null,
-    note_details_id      integer unique,
-    status_of_completion bool   not null,
-    primary key (note_id)
+    id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_telegram_id  BIGINT       NOT NULL UNIQUE
 );
 
-create table if not exists notes_specific_details
+CREATE TABLE IF NOT EXISTS notes
 (
-    note_details_id    serial       not null,
-    content_short_name varchar(255) unique,
-    content_url          varchar(255),
-    description_id     integer      not null unique,
-    content_type       varchar(255) not null check (content_type in ('PODCAST', 'VIDEO', 'BOOK', 'ARTICLE')),
-    primary key (note_details_id)
+    id                   UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    content_details_id   UUID UNIQUE NOT NULL,
+    status_of_completion BOOL        NOT NULL
 );
 
-create table if not exists description
+CREATE TYPE content_type AS ENUM (
+    'PODCAST',
+    'VIDEO',
+    'BOOK',
+    'ARTICLE'
+    );
+
+CREATE TABLE IF NOT EXISTS content_details
 (
-    description_id serial  not null,
-    comment_id     integer not null, -- one to many. many comments to one description id
-    primary key (description_id)
+    id                 UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    content_short_name VARCHAR(255) UNIQUE,
+    content_url        VARCHAR(255),
+    content_type       content_type NOT NULL
 );
 
-create table if not exists comment
+CREATE TABLE IF NOT EXISTS comment
 (
-    comment_id   serial not null,
-    text_message text   not null,
-    timecode     integer, -- in seconds
-    page         integer,
-    primary key (comment_id)
+    id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    text_message TEXT NOT NULL,
+    timecode     INTEGER, -- IN SECONDS
+    page         INTEGER
 );
 
-create table if not exists users_notes
+CREATE TABLE IF NOT EXISTS note_comments
 (
-    user_id serial not null,
-    note_id serial not null, -- one to many: many notes per user
-    primary key (user_id)
+    id                 UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    content_details_id UUID REFERENCES content_details (id) NOT NULL UNIQUE,
+    comment_id         UUID                                 NOT NULL -- ONE TO MANY. MANY COMMENTS TO ONE DESCRIPTION ID
 );
 
-alter table if exists users_notes
-    add constraint user_notes_user_id_constraint foreign key (user_id) references users on delete cascade;
-alter table if exists users_notes
-    add constraint users_notes_note_id_constraint foreign key (note_id) references notes on delete cascade;
-alter table if exists notes
-    add constraint notes_specific_details_note_details_id foreign key (note_details_id) references notes_specific_details on delete cascade;
-alter table if exists notes_specific_details
-    add constraint notes_specific_details_description_id foreign key (description_id) references description on delete cascade;
-alter table if exists description
-    add constraint description_comment_id foreign key (comment_id) references comment on delete cascade;
+CREATE TABLE IF NOT EXISTS user_note_links
+(
+    id      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES users (id) NOT NULL,
+    note_id UUID REFERENCES notes (id) NOT NULL UNIQUE -- ONE TO MANY: MANY NOTES PER USER
+);

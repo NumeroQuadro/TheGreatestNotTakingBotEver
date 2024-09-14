@@ -4,18 +4,19 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
 @Table(name = "notes")
 public class Notes {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "note_id", nullable = false)
-    private Integer id;
+    @GeneratedValue(generator = "UUID")
+    private UUID id;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "note_details_id", referencedColumnName = "note_details_id")
-    private NoteSpecificDetails noteSpecificDetails;
-    @Column(name = "status_of_completion")
+    @JoinColumn(name = "content_details_id", nullable = false)
+    private ContentDetails contentDetails;
+    @Column(nullable = false)
     private Boolean statusOfCompletion;
 }

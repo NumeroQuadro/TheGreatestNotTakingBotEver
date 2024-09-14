@@ -4,19 +4,25 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Getter
 @Setter
 @Table(name = "comment")
 public class Comment {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "comment_id")
-    private Integer id;
-    @Column(name = "text_message")
+    @GeneratedValue(generator = "UUID")
+    private UUID id;
+    @Column(nullable = false)
     private String textMessage;
-    @Column(name = "timecode")
+    @Column(nullable = false)
     private Long timecode;
     @Column(name = "page")
     private Integer page;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinTable(name = "note_comments",
+            joinColumns = @JoinColumn(name = "comment_id"),
+            inverseJoinColumns = @JoinColumn(name = "content_details_id"))
+    private ContentDetails contentDetails;
 }

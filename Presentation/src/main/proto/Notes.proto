@@ -6,41 +6,45 @@ option java_outer_classname = "NotesServiceProto";
 
 package notes_service;
 
-message User {
-  int32 user_id = 1;
-  string user_telegram_tag = 2;
-  int64 user_telegram_id = 3;
+message UUID {
+  string value = 1;
 }
 
-message Note {
-  int32 note_id = 1;
-  int32 note_details_id = 2;
+message Users {
+  UUID id = 1;
+  int64 user_telegram_id = 2;
+}
+
+message Notes {
+  UUID id = 1;
+  UUID content_details_id = 2;
   bool status_of_completion = 3;
 }
 
-message NotesSpecificDetails {
-  int32 note_details_id = 1;
+message ContentDetails {
+  UUID id = 1;
   string content_short_name = 2;
-  string content_url = 3;
-  int32 description_id = 4;
-  string content_type = 5;
-}
-
-message Description {
-  int32 description_id = 1;
-  repeated int32 comment_ids = 2;
+  string content_url = 3; // This can be null
+  ContentType content_type = 4;
 }
 
 message Comment {
-  int32 comment_id = 1;
+  UUID id = 1;
   string text_message = 2;
-  int32 timecode = 3;
-  int32 page = 4;
+  int64 timecode = 3; // may be null
+  int32 page = 4; // may be null
 }
 
-message UsersNotes {
-  int32 user_id = 1;
-  repeated int32 note_ids = 2;
+message NoteComments {
+  UUID id = 1;
+  UUID content_details_id = 2;
+  UUID comment_id = 3;
+}
+
+message UserNotesLinks {
+  UUID id = 1;
+  UUID user_id = 2;
+  UUID note_id = 3;
 }
 
 enum ContentType {
@@ -50,60 +54,13 @@ enum ContentType {
   ARTICLE = 3;
 }
 
+// User Requests and Responses
 message AddUserRequest {
-  string user_telegram_tag = 1;
-  int64 user_telegram_id = 2;
+  int64 user_telegram_id = 1;
 }
 
 message AddUserResponse {
-  User user = 1;
-}
-
-message LinkNoteWithUserRequest {
-  int32 note_id = 1;
-  int32 user_id = 2;
-}
-
-message LinkNoteWithUserResponse {
-  UsersNotes usersNotes = 1;
-}
-
-message AddNoteRequest {
-  int32 note_details_id = 1;
-  bool status_of_completion = 2;
-}
-
-message AddNoteResponse {
-  Note note = 1;
-}
-
-message AddNoteSpecificDetailsRequest {
-  string content_short_name = 1;
-  int32 description_id = 2;
-  string content_url = 3;
-  string content_type = 4;
-}
-
-message AddNoteSpecificDetailsResponse {
-  NotesSpecificDetails notesSpecificDetails = 1;
-}
-
-message AddDescriptionRequest {
-  repeated int32 comment_ids = 1;
-}
-
-message AddDescriptionResponse {
-  Description description = 1;
-}
-
-message AddCommentRequest {
-  string text_message = 1;
-  int32 timecode = 2;
-  int32 page = 3;
-}
-
-message AddCommentResponse {
-  Comment comment = 1;
+  Users user = 1;
 }
 
 message GetUserByTelegramIdRequest {
@@ -111,95 +68,170 @@ message GetUserByTelegramIdRequest {
 }
 
 message GetUserByIdRequest {
-  int32 user_id = 1;
+  UUID user_id = 1;
 }
 
 message GetUserResponse {
-  User user = 1;
-}
-
-message GetNoteByIdRequest {
-  int32 note_id = 1;
-}
-
-message GetNoteByShortNameRequest {
-  string content_short_name = 1;
-}
-
-message GetNoteByUrlRequest {
-  string content_url = 1;
-}
-
-message GetNoteResponse {
-  Note note = 1;
-}
-
-message GetNotesSpecificDetailsRequest {
-  int32 note_details_id = 1;
-}
-
-message GetNotesSpecificDetailsResponse {
-  NotesSpecificDetails details = 1;
-}
-
-message GetDescriptionRequest {
-  int32 description_id = 1;
-}
-
-message GetDescriptionResponse {
-  Description description = 1;
-}
-
-message GetCommentRequest {
-  int32 comment_id = 1;
-}
-
-message GetCommentResponse {
-  Comment comment = 1;
+  Users user = 1;
 }
 
 message GetUsersNotesRequest {
-  int32 user_id = 1;
+  UUID user_id = 1;
 }
 
 message GetUsersNotesResponse {
-  repeated Note notes = 1;
-}
-
-message RemoveNoteRequest {
-  int32 note_id = 1;
-}
-
-message RemoveNoteResponse {
-  bool success = 1;
+  repeated Notes notes = 1;
 }
 
 message RemoveUserRequest {
-  int32 user_id = 1;
+  UUID user_id = 1;
 }
 
 message RemoveUserResponse {
   bool success = 1;
 }
 
+// Note Requests and Responses
+message AddNoteRequest {
+  UUID content_details_id = 1;
+}
+
+message AddNoteResponse {
+  Notes note = 1;
+}
+
+message GetNoteByIdRequest {
+  UUID note_id = 1;
+}
+
+message GetNoteResponse {
+  Notes note = 1;
+}
+
+message LinkNoteWithUserRequest {
+  UUID note_id = 1;
+  UUID user_id = 2;
+}
+
+message LinkNoteWithUserResponse {
+  UserNotesLinks user_notes_links = 1;
+}
+
+message RemoveNoteRequest {
+  UUID note_id = 1;
+}
+
+message RemoveNoteResponse {
+  bool success = 1;
+}
+
+// Notes Specific Details Requests and Responses
+message AddContentDetailsRequest {
+  string content_short_name = 1;
+  string content_url = 2;
+  ContentType content_type = 3;
+}
+
+message AddContentDetailsResponse {
+  ContentDetails content_details = 1;
+}
+
+message GetContentDetailsByIdRequest {
+  UUID content_details_id = 1;
+}
+
+message GetContentDetailsByShortNameRequest {
+  string content_short_name = 1;
+}
+
+message GetContentDetailsByUrlRequest {
+  string content_url = 1;
+}
+
+message GetContentDetailsByIdResponse {
+  ContentDetails content_details = 1;
+}
+
+message GetArrayContentDetailsResponse {
+  repeated ContentDetails array_content_details = 1;
+}
+
+// Description Requests and Responses
+message AddNoteCommentsRequest {
+  UUID content_details_id = 1;
+  UUID comment_id = 2;
+}
+
+message AddNoteCommentsResponse {
+  NoteComments note_comments = 1;
+}
+
+message GetNoteCommentsByCommentIdRequest {
+  UUID comment_id = 1;
+}
+
+message GetNoteCommentsByCommentIdResponse {
+  repeated NoteComments note_comments = 1;
+}
+
+message GetNoteCommentsByIdRequest {
+  UUID note_comments_id = 1;
+}
+
+message GetNoteCommentsByIdResponse {
+  NoteComments note_comments = 1;
+}
+
+message GetCommentsByContentDetailsIdRequest {
+  UUID content_details_id = 1;
+}
+
+message GetCommentsByContentDetailsIdResponse {
+  repeated Comment comments = 1;
+}
+
+// Comment Requests and Responses
+message AddCommentRequest {
+  string text_message = 1;
+  int64 timecode = 2; // may be null
+  int32 page = 3; // may be null
+}
+
+message AddCommentResponse {
+  Comment comment = 1;
+}
+
+message GetCommentRequest {
+  UUID comment_id = 1;
+}
+
+message GetCommentResponse {
+  Comment comment = 1;
+}
+
+// Service Definition
 service NotesService {
   rpc AddUser(AddUserRequest) returns (AddUserResponse);
-  rpc LinkNoteWithUser(LinkNoteWithUserRequest) returns (LinkNoteWithUserResponse);
-  rpc AddNoteSpecificDetails(AddNoteSpecificDetailsRequest) returns (AddNoteSpecificDetailsResponse);
-  rpc AddNote (AddNoteRequest) returns (AddNoteResponse);
-  rpc AddDescription (AddDescriptionRequest) returns (AddDescriptionResponse);
-  rpc AddComment (AddCommentRequest) returns (AddCommentResponse);
-
   rpc GetUserByTelegramId(GetUserByTelegramIdRequest) returns (GetUserResponse);
   rpc GetUserById(GetUserByIdRequest) returns (GetUserResponse);
-  rpc GetNoteById(GetNoteByIdRequest) returns (GetNoteResponse);
-  rpc GetNoteByShortName(GetNoteByShortNameRequest) returns (GetNoteResponse);
-  rpc GetNoteByUrl(GetNoteByUrlRequest) returns (GetNoteResponse);
-  rpc GetNotesSpecificDetails(GetNotesSpecificDetailsRequest) returns (GetNotesSpecificDetailsResponse);
-  rpc GetDescription(GetDescriptionRequest) returns (GetDescriptionResponse);
-  rpc GetComment(GetCommentRequest) returns (GetCommentResponse);
   rpc GetUsersNotes(GetUsersNotesRequest) returns (GetUsersNotesResponse);
-
-  rpc RemoveNote(RemoveNoteRequest) returns (RemoveNoteResponse);
   rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse);
+
+  rpc AddNote (AddNoteRequest) returns (AddNoteResponse);
+  rpc GetNoteById(GetNoteByIdRequest) returns (GetNoteResponse);
+  rpc LinkNoteWithUser(LinkNoteWithUserRequest) returns (LinkNoteWithUserResponse);
+  rpc RemoveNote(RemoveNoteRequest) returns (RemoveNoteResponse);
+
+  rpc AddContentDetails(AddContentDetailsRequest) returns (AddContentDetailsResponse);
+  rpc GetContentDetailsById(GetContentDetailsByIdRequest) returns (GetContentDetailsByIdResponse);
+  rpc GetContentDetailsByShortName(GetContentDetailsByShortNameRequest) returns (GetArrayContentDetailsResponse);
+  rpc GetContentDetailsByUrl(GetContentDetailsByUrlRequest) returns (GetArrayContentDetailsResponse);
+
+  rpc AddNoteComments (AddNoteCommentsRequest) returns (AddNoteCommentsResponse);
+  rpc GetNoteCommentsById (GetNoteCommentsByIdRequest) returns (GetNoteCommentsByIdResponse);
+  rpc GetNoteCommentsByCommentId (GetNoteCommentsByCommentIdRequest) returns (GetNoteCommentsByCommentIdResponse);
+  rpc GetCommentsByContentDetailsId (GetCommentsByContentDetailsIdRequest) returns (GetCommentsByContentDetailsIdResponse);
+
+  rpc AddComment (AddCommentRequest) returns (AddCommentResponse);
+  rpc GetComment(GetCommentRequest) returns (GetCommentResponse);
 }

@@ -16,13 +16,13 @@ public class GrpcServer {
         this.notesService = notesService;
     }
 
-    public void run() throws IOException, InterruptedException {
-        Server server = ServerBuilder.forPort(50051)
+    public void run(Integer portToListen) throws IOException, InterruptedException {
+        Server server = ServerBuilder.forPort(portToListen)
                 .addService(notesService)
                 .build();
 
         server.start();
-        System.out.println("Server started, listening on " + 50051);
+        System.out.println("Server started, listening on " + portToListen);
         server.awaitTermination();
     }
 }

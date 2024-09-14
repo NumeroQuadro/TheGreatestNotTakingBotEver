@@ -2,34 +2,48 @@ package src.Services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import src.Models.NoteSpecificDetails;
+import src.Models.ContentDetails;
 import src.Models.Notes;
 import src.Repositories.NotesRepository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 public class NoteService {
-    private NotesRepository notesRepository;
-    private NoteSpecificDetailsService noteSpecificDetailsService;
+    private final NotesRepository notesRepository;
 
     @Autowired
-    public NoteService(NotesRepository notesRepository, NoteSpecificDetailsService noteSpecificDetailsService) {
+    public NoteService(
+            NotesRepository notesRepository,
+            ContentDetailsService contentDetailsService
+    ) {
         this.notesRepository = notesRepository;
-        this.noteSpecificDetailsService = noteSpecificDetailsService;
     }
 
-    public Notes addNote(NoteSpecificDetails noteSpecificDetails) {
+    public Notes addNote(ContentDetails contentDetails) {
         var note = new Notes();
-        note.setNoteSpecificDetails(noteSpecificDetails);
+        note.setContentDetails(contentDetails);
         note.setStatusOfCompletion(false);
 
         return notesRepository.save(note);
     }
 
-    public Notes addNote(NoteSpecificDetails noteSpecificDetails, Boolean statusOfCompletion) {
-        var note = new Notes();
-        note.setNoteSpecificDetails(noteSpecificDetails);
-        note.setStatusOfCompletion(statusOfCompletion);
+    public Optional<Notes> updateNote(Notes newNote) {
+        return notesRepository.findById(newNote.getId()).map(note -> {
+            note.setContentDetails(newNote.getContentDetails());
+            note.setStatusOfCompletion(newNote.getStatusOfCompletion());
 
-        return notesRepository.save(note);
+            return note;
+        });
+    }
+
+    public Optional<Notes> getNote(UUID id) {
+        return notesRepository.findById(id);
+    }
+
+    public void deleteNote(UUID id) {
+        var note = notesRepository.findById(id).orElseThrow();
+        notesRepository.delete(note);
     }
 }

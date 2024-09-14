@@ -1,93 +1,60 @@
 package src.Services;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import src.Models.Comment;
 import src.Repositories.CommentRepository;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 public class CommentService {
-    private CommentRepository commentRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository) {
+    public CommentService(
+            CommentRepository commentRepository
+    ) {
         this.commentRepository = commentRepository;
     }
 
-    /**
-     * Add new comment
-     * @param textMessage
-     * @param timecode
-     * @return src.Models.Comment
-     */
-    public Comment addComment(String textMessage, Long timecode) {
+    public Comment addComment(String textMessage, Long timecode, Integer page) {
         var comment = new Comment();
         comment.setTimecode(timecode);
-        comment.setTextMessage(textMessage);
-
-        return commentRepository.save(comment);
-    }
-
-    public Comment addComment(String textMessage, Integer page) {
-        var comment = new Comment();
-        comment.setTextMessage(textMessage);
         comment.setPage(page);
+        comment.setTextMessage(textMessage);
 
         return commentRepository.save(comment);
     }
 
-    /**
-     * Set new text message to existing comment (which is found by its id)
-     * @param commentId
-     * @param newTextMessage
-     * @return src.Models.Comment
-     * @throws java.util.NoSuchElementException if no such comment exist
-     */
-    public Comment setTextMessageToComment(Integer commentId, String newTextMessage) {
-        var comment = commentRepository.findById(commentId).orElseThrow();
-        comment.setTextMessage(newTextMessage);
+    @Transactional
+    public Optional<Comment> updateComment(UUID commentId, Comment updatedComment) {
+        return commentRepository.findById(commentId).map(comment -> {
+            comment.setId(updatedComment.getId());
+            comment.setTextMessage(updatedComment.getTextMessage());
+            comment.setTimecode(updatedComment.getTimecode());
 
-        return commentRepository.save(comment);
+            return comment;
+        });
     }
 
-    /**
-     * Set new timecode to existing comment (which is found by its id)
-     * @param commendId
-     * @param timecode
-     * @throws java.util.NoSuchElementException if no such comment exist
-     */
-    public Comment setTimecodeToComment(Integer commendId, Long timecode) {
-        var comment = commentRepository.findById(commendId).orElseThrow();
-        comment.setTimecode(timecode);
-
-        return commentRepository.save(comment);
+    public Optional<Comment> getComment(UUID commentId) {
+        return commentRepository.findById(commentId);
     }
 
-    /**
-     * Set new page number to existing comment (which is found by its id)
-     * @param commentId
-     * @param newPage
-     * @throws java.util.NoSuchElementException if no such comment exist
-     */
-    public Comment setPageToComment(Integer commentId, Integer newPage) {
-        var comment = commentRepository.findById(commentId).orElseThrow();
-        comment.setPage(newPage);
-
-        return commentRepository.save(comment);
-    }
-
-    /**
-     * Get comment by its id
-     * @param commentId
-     * @return src.Models.Comment
-     * @throws java.util.NoSuchElementException - if no such comment exist
-     */
-    public Comment getComment(Integer commentId) {
-        return commentRepository.findById(commentId).orElseThrow();
-    }
-
-    public void deleteComment(Integer commentId) {
+    public void deleteComment(UUID commentId) {
         var comment = commentRepository.findById(commentId);
-        comment.ifPresent(comm -> commentRepository.delete(comm));
+        comment.ifPresent(commentRepository::delete);
+    }
+
+    public List<Comment> getAllComments() {
+        return commentRepository.findAll();
+    }
+
+    public Map<UUID, Comment> getCommentsByIds(List<UUID> commentIds) {
+        List<Comment> comments = commentRepository.findAllById(commentIds);
+        return comments.stream().collect(Collectors.toMap(Comment::getId, comment -> comment));
     }
 }

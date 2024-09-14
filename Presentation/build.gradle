@@ -40,8 +40,7 @@ dependencies {
     //implementation 'io.grpc:grpc-all:1.56.0'
 
     //implementation 'org.security:Application:0.0.1-SNAPSHOT'
-//    implementation project (':Application')
-    implementation files('Application/build/libs/Application-0.0.1-SNAPSHOT-plain.jar')
+    implementation project (':Application')
 }
 
 sourceSets {
